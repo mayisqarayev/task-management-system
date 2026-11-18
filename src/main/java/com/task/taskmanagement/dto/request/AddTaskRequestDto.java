@@ -1,6 +1,7 @@
 package com.task.taskmanagement.dto.request;
 
 import com.task.taskmanagement.entity.enums.TaskPriority;
+import jakarta.validation.constraints.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -10,8 +11,13 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AddTaskRequestDto {
+    @NotNull(message = "Title can not be null")
     String title;
+    @NotEmpty(message = "Description can not be empty")
     String description;
+    @NotNull(message = "Priority can not be null")
     TaskPriority taskPriority;
-    String taskWeight;
+    @Min(value = 1, message = "Weight must be least 1")
+    @Max(value = 10, message = "Weight must be most 10")
+    Short taskWeight;
 }
