@@ -5,6 +5,7 @@ import com.task.taskmanagement.dto.request.UpdateTaskRequestDto;
 import com.task.taskmanagement.dto.response.AllTasksResponseDto;
 import com.task.taskmanagement.dto.response.TaskResponseDto;
 import com.task.taskmanagement.service.TaskService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,7 +31,7 @@ public class TaskController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void saveTask(@RequestBody AddTaskRequestDto requestDto) {
+    public void saveTask(@RequestBody @Valid AddTaskRequestDto requestDto) {
         service.saveTask(requestDto);
     }
 
@@ -42,7 +43,7 @@ public class TaskController {
 
     @PutMapping("/{id}")
     public void updateTask(@PathVariable Integer id,
-                           @RequestBody UpdateTaskRequestDto requestDto) {
+                           @RequestBody @Valid UpdateTaskRequestDto requestDto) {
         service.updateTask(id, requestDto);
     }
 }
