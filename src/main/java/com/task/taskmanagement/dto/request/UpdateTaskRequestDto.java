@@ -2,6 +2,7 @@ package com.task.taskmanagement.dto.request;
 
 import com.task.taskmanagement.entity.enums.TaskPriority;
 import com.task.taskmanagement.entity.enums.TaskStatus;
+import jakarta.validation.constraints.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -11,9 +12,15 @@ import lombok.experimental.FieldDefaults;
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UpdateTaskRequestDto {
+    @NotNull(message = "Title can not be null")
     String title;
+    @NotEmpty(message = "Description can not be empty")
     String description;
+    @NotNull(message = "Status can not be null")
     TaskStatus taskStatus;
+    @NotNull(message = "Priority can not be null")
     TaskPriority taskPriority;
-    String taskWeight;
+    @Min(value = 1, message = "Weight must be least 1")
+    @Max(value = 10, message = "Weight must be most 10")
+    Short taskWeight;
 }
