@@ -21,26 +21,33 @@ public class TaskEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
-    @Column(name = "title")
+    @Column(name = "title", nullable = false, unique = true, length = 40)
     String title;
-    @Column(name = "description", columnDefinition = "TEXT")
+    @Column(name = "description", columnDefinition = "TEXT", length = 2000)
     String description;
-    @Column(name = "task_status")
+    @Column(name = "task_status", nullable = false, length = 20)
     @Enumerated(EnumType.STRING)
     TaskStatus taskStatus;
-    @Column(name = "task_priority")
+    @Column(name = "task_priority", nullable = false, length = 20)
     @Enumerated(EnumType.STRING)
     TaskPriority taskPriority;
     @Column(name = "task_weight")
-    String taskWeight;
-    @Column(name = "status")
-    Boolean status = true;
-    @Column(name = "created_at")
+    Short taskWeight;
+    @Column(name = "status", nullable = false)
+    Boolean status;
+    @Column(name = "created_at", nullable = false, updatable = false)
     LocalDateTime createdAt;
 
     @PrePersist
     public void onCreate() {
+        if(taskStatus == null) {
+            taskStatus = TaskStatus.TODO;
+        }
+
+        if(status == null) {
+            status = true;
+        }
+
         createdAt = LocalDateTime.now();
-        taskStatus = TaskStatus.TODO;
     }
 }
