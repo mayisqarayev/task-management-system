@@ -1,5 +1,7 @@
 package com.task.taskmanagement.service;
 
+import com.task.taskmanagement.dto.response.PageResponseDto;
+import com.task.taskmanagement.entity.enums.TaskPriority;
 import com.task.taskmanagement.entity.enums.TaskStatus;
 import com.task.taskmanagement.exception.InvalidTaskModificationException;
 import com.task.taskmanagement.exception.TaskAlreadyDeletedException;
@@ -12,9 +14,15 @@ import com.task.taskmanagement.dto.response.AllTasksResponseDto;
 import com.task.taskmanagement.dto.response.TaskResponseDto;
 import com.task.taskmanagement.entity.TaskEntity;
 import com.task.taskmanagement.repository.TaskRepository;
+import com.task.taskmanagement.specification.TaskSpecification;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @Service
 public class TaskService {
@@ -26,11 +34,38 @@ public class TaskService {
         this.converter = converter;
     }
 
-    public List<AllTasksResponseDto> getAll() {
-        return repository.findAll().stream()
-                .filter(entity -> entity.getStatus().equals(true))
+    public PageResponseDto<AllTasksResponseDto> getAll(
+            int pageNumber,
+            int pageSize,
+            TaskStatus taskStatus,
+            TaskPriority taskPriority
+    ) {
+
+        Pageable pageable = PageRequest.of(
+                pageNumber,
+                pageSize,
+                Sort.by(Sort.Direction.DESC, "id")
+        );
+        Specification<TaskEntity> specification = Specification.allOf(
+                TaskSpecification.isActive(),
+                TaskSpecification.hasTaskStatus(taskStatus),
+                TaskSpecification.hasTaskPriority(taskPriority)
+        );
+
+        Page<TaskEntity> page = repository.findAll(specification, pageable);
+        List<AllTasksResponseDto> elements = page.getContent()
+                .stream()
                 .map(converter::toAllTasksResponseDtoFromEntity)
-                .collect(Collectors.toList());
+                .toList();
+
+        return new PageResponseDto<>(
+                elements,
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages(),
+                page.hasNext()
+        );
     }
 
     public TaskResponseDto getById(Integer id) {
