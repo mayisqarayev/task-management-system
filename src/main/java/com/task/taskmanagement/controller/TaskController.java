@@ -3,7 +3,10 @@ package com.task.taskmanagement.controller;
 import com.task.taskmanagement.dto.request.AddTaskRequestDto;
 import com.task.taskmanagement.dto.request.UpdateTaskRequestDto;
 import com.task.taskmanagement.dto.response.AllTasksResponseDto;
+import com.task.taskmanagement.dto.response.PageResponseDto;
 import com.task.taskmanagement.dto.response.TaskResponseDto;
+import com.task.taskmanagement.entity.enums.TaskPriority;
+import com.task.taskmanagement.entity.enums.TaskStatus;
 import com.task.taskmanagement.service.TaskService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -20,8 +23,13 @@ public class TaskController {
     }
 
     @GetMapping
-    public List<AllTasksResponseDto> getAll() {
-        return service.getAll();
+    public PageResponseDto<AllTasksResponseDto> getAll(
+            @RequestParam(defaultValue = "0") int pageNumber,
+            @RequestParam(defaultValue = "10") int pageSize,
+            @RequestParam(required = false) TaskStatus taskStatus,
+            @RequestParam(required = false) TaskPriority taskPriority
+    ) {
+        return service.getAll(pageNumber, pageSize, taskStatus, taskPriority);
     }
 
     @GetMapping("/{id}")
