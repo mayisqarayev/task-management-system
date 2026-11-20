@@ -33,13 +33,14 @@ public class TaskMapper {
 
     public TaskEntity toEntityFromAddTaskRequestDto(AddTaskRequestDto requestDto) {
         TaskEntity entity = new TaskEntity();
-        entity.setTitle(requestDto.getTitle());
-        entity.setDescription(requestDto.getDescription());
+        Short taskWeight = requestDto.getTaskWeight() == null ? 0 : requestDto.getTaskWeight();
+
+        entity.setTitle(requestDto.getTitle().trim());
+        entity.setDescription(requestDto.getDescription().trim());
         entity.setTaskStatus(TaskStatus.TODO);
         entity.setTaskPriority(requestDto.getTaskPriority());
-        entity.setTaskWeight(requestDto.getTaskWeight());
+        entity.setTaskWeight(taskWeight);
         entity.setStatus(true);
-        entity.setCreatedAt(LocalDateTime.now());
 
         return entity;
     }
