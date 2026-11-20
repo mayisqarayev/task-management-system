@@ -15,6 +15,7 @@ import com.task.taskmanagement.dto.response.TaskResponseDto;
 import com.task.taskmanagement.entity.TaskEntity;
 import com.task.taskmanagement.repository.TaskRepository;
 import com.task.taskmanagement.specification.TaskSpecification;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +26,7 @@ import java.util.List;
 
 
 @Service
+@Slf4j
 public class TaskService {
     private final TaskRepository repository;
     private final TaskMapper converter;
@@ -74,31 +76,43 @@ public class TaskService {
     }
 
     public void saveTask(AddTaskRequestDto requestDto) {
+        log.debug("Task saving, title={}", requestDto.getTitle());
+
         if(repository.existsByTitleIgnoreCase(requestDto.getTitle())) {
+            log.warn("Task already exists, title={}", requestDto.getTitle());
             throw new TaskAlreadyExistsException("Task already exists");
         }
-        repository.save(converter.toEntityFromAddTaskRequestDto(requestDto));
+
+        TaskEntity entity = repository.save(converter.toEntityFromAddTaskRequestDto(requestDto));
+        log.info("Task created, id={}", entity.getId());
     }
 
     public void deleteById(Integer id) {
+        log.debug("Task deleting, id={}", id);
         TaskEntity entity = getEntityById(id);
 
         if(entity.getStatus().equals(false)) {
+            log.warn("Task already deleted, id={}", id);
             throw new TaskAlreadyDeletedException("Task already deleted");
         }
 
         entity.setStatus(false);
         repository.save(entity);
+        log.info("Task deleted, id={}", id);
     }
 
     public void updateTask(Integer id, UpdateTaskRequestDto requestDto) {
+        log.debug("Task updating, id={}", id);
         TaskEntity entity = getEntityById(id);
 
-        if(repository.existsByTitleAndIdNot(requestDto.getTitle(), id)) {
+        if(repository.existsByTitleIgnoreCaseAndIdNot(requestDto.getTitle(), id)) {
+            log.warn("Task already exists, id={}, title={}", id, requestDto.getTitle());
             throw new TaskAlreadyExistsException("Task already exists");
         }
 
         if(entity.getStatus().equals(false) || entity.getTaskStatus().equals(TaskStatus.DONE)) {
+            log.warn("Task modification failed, id={}, status={}, taskStatus={}",
+                    id, entity.getStatus(), entity.getTaskStatus());
             throw new InvalidTaskModificationException("Invalid task modification");
         }
 
@@ -109,10 +123,14 @@ public class TaskService {
         entity.setTaskWeight(requestDto.getTaskWeight());
 
         repository.save(entity);
+        log.info("Task updated, id={}", id);
     }
 
     private TaskEntity getEntityById(Integer id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new TaskNotFoundException("Task not found"));
+        return repository.findByIdAndStatusTrue(id)
+                .orElseThrow(() -> {
+                    log.warn("Task not found, id={}", id);
+                    return new TaskNotFoundException("Task not found");
+                });
     }
 }
