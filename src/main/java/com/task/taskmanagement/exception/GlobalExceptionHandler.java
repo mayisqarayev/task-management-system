@@ -166,4 +166,79 @@ public class GlobalExceptionHandler {
 
         return response;
     }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Map<String, Object> handleUserNotFound(
+            UserNotFoundException ex,
+            HttpServletRequest request
+    ) {
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("path", request.getRequestURI());
+        response.put("message", ex.getMessage());
+        response.put("status", 404);
+        response.put("timestamp", LocalDateTime.now());
+
+        return response;
+    }
+
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public Map<String, Object> handleUserAlreadyExists(
+            UserAlreadyExistsException ex,
+            HttpServletRequest request
+    ) {
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("path", request.getRequestURI());
+        response.put("message", ex.getMessage());
+        response.put("status", 409);
+        response.put("timestamp", LocalDateTime.now());
+
+        return response;
+    }
+
+    @ExceptionHandler(UserAlreadyDeletedException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public Map<String, Object> handleUserAlreadyDeleted(
+            UserAlreadyDeletedException ex,
+            HttpServletRequest request
+    ) {
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("path", request.getRequestURI());
+        response.put("message", ex.getMessage());
+        response.put("status", 409);
+        response.put("timestamp", LocalDateTime.now());
+
+        return response;
+    }
+
+    @ExceptionHandler(UserAlreadyActiveException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public Map<String, Object> handleUserAlreadyActive(
+            UserAlreadyActiveException ex,
+            HttpServletRequest request
+    ) {
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("path", request.getRequestURI());
+        response.put("message", ex.getMessage());
+        response.put("status", 409);
+        response.put("timestamp", LocalDateTime.now());
+
+        return response;
+    }
+
+    @ExceptionHandler(InvalidChangePasswordException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, Object> handleInvalidChangePassword(
+            InvalidChangePasswordException ex,
+            HttpServletRequest request
+    ) {
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("path", request.getRequestURI());
+        response.put("message", ex.getMessage());
+        response.put("status", 400);
+        response.put("timestamp", LocalDateTime.now());
+
+        return response;
+    }
 }

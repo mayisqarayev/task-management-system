@@ -11,7 +11,6 @@ import java.util.List;
 
 @Getter
 @Setter
-@Data
 @AllArgsConstructor
 public class PageResponseDto<T> {
     private List<T> content;
