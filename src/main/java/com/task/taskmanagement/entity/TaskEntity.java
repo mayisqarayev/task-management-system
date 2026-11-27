@@ -48,7 +48,7 @@ public class TaskEntity {
     @JoinColumn(name = "created_by")
     UserEntity createdBy;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "assignee_id")
+    @JoinColumn(name = "assignee_id", nullable = true)
     UserEntity assignee;
 
     @PrePersist

@@ -11,6 +11,12 @@ import java.time.LocalDateTime;
 
 @Component
 public class TaskMapper {
+    private final UserMapper userMapper;
+
+    public TaskMapper(UserMapper userMapper) {
+        this.userMapper = userMapper;
+    }
+
     public TaskResponseDto toTaskResponseDtoFromEntity(TaskEntity taskEntity) {
         return new TaskResponseDto(
                 taskEntity.getId(),
@@ -19,7 +25,9 @@ public class TaskMapper {
                 taskEntity.getTaskStatus(),
                 taskEntity.getTaskPriority(),
                 taskEntity.getTaskWeight(),
-                taskEntity.getCreatedAt()
+                taskEntity.getCreatedAt(),
+                userMapper.toUserResponseDtoFromEntity(taskEntity.getCreatedBy()),
+                userMapper.toUserResponseDtoFromEntity(taskEntity.getAssignee())
         );
     }
 
@@ -27,7 +35,9 @@ public class TaskMapper {
         return new AllTasksResponseDto(
                 taskEntity.getId(),
                 taskEntity.getTitle(),
-                taskEntity.getTaskStatus()
+                taskEntity.getTaskStatus(),
+                userMapper.toAllUserResponseDtoFromEntity(taskEntity.getCreatedBy()),
+                userMapper.toAllUserResponseDtoFromEntity(taskEntity.getAssignee())
         );
     }
 

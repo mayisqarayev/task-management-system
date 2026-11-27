@@ -15,4 +15,6 @@ public class AllTasksResponseDto {
     Integer id;
     String title;
     TaskStatus taskStatus;
+    AllUserResponseDto createdBy;
+    AllUserResponseDto assignee;
 }

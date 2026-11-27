@@ -1,4 +1,4 @@
-package com.task.taskmanagement.dto.request;
+package com.task.taskmanagement.dto.response;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

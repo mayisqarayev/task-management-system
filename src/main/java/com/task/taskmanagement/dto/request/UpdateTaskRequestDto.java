@@ -12,9 +12,9 @@ import lombok.experimental.FieldDefaults;
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UpdateTaskRequestDto {
-    @NotNull(message = "Title can not be null")
+    @NotBlank(message = "Title can not be blank")
     String title;
-    @NotEmpty(message = "Description can not be empty")
+    @NotBlank(message = "Description can not be blank")
     String description;
     @NotNull(message = "Status can not be null")
     TaskStatus taskStatus;

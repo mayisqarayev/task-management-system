@@ -1,6 +1,7 @@
 package com.task.taskmanagement.service;
 
 import com.task.taskmanagement.dto.response.PageResponseDto;
+import com.task.taskmanagement.entity.UserEntity;
 import com.task.taskmanagement.entity.enums.TaskPriority;
 import com.task.taskmanagement.entity.enums.TaskStatus;
 import com.task.taskmanagement.exception.InvalidTaskModificationException;
@@ -14,6 +15,7 @@ import com.task.taskmanagement.dto.response.AllTasksResponseDto;
 import com.task.taskmanagement.dto.response.TaskResponseDto;
 import com.task.taskmanagement.entity.TaskEntity;
 import com.task.taskmanagement.repository.TaskRepository;
+import com.task.taskmanagement.repository.UserRepository;
 import com.task.taskmanagement.specification.TaskSpecification;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -22,6 +24,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 
@@ -30,12 +35,15 @@ import java.util.List;
 public class TaskService {
     private final TaskRepository repository;
     private final TaskMapper converter;
+    private final UserService userService;
 
-    public TaskService(TaskRepository repository, TaskMapper converter) {
+    public TaskService(TaskRepository repository, TaskMapper converter, UserService userService) {
         this.repository = repository;
         this.converter = converter;
+        this.userService = userService;
     }
 
+    @Transactional(readOnly = true)
     public PageResponseDto<AllTasksResponseDto> getAll(
             int pageNumber,
             int pageSize,
@@ -70,20 +78,29 @@ public class TaskService {
         );
     }
 
+    @Transactional(readOnly = true)
     public TaskResponseDto getById(Integer id) {
-        TaskEntity taskEntity = getEntityById(id);
+        TaskEntity taskEntity = repository.findByIdAndStatusTrue(id)
+                .orElseThrow(() -> new TaskNotFoundException("Task not found"));
         return converter.toTaskResponseDtoFromEntity(taskEntity);
     }
 
     public void saveTask(AddTaskRequestDto requestDto) {
         log.debug("Task saving, title={}", requestDto.getTitle());
 
+        UserEntity createdBy = userService.getUserEntityById(requestDto.getCreatedBy());
+        UserEntity assignee = userService.getUserEntityById(requestDto.getAssigneeId());
+
         if(repository.existsByTitleIgnoreCase(requestDto.getTitle())) {
             log.warn("Task already exists, title={}", requestDto.getTitle());
             throw new TaskAlreadyExistsException("Task already exists");
         }
 
-        TaskEntity entity = repository.save(converter.toEntityFromAddTaskRequestDto(requestDto));
+        TaskEntity convertedEntity = converter.toEntityFromAddTaskRequestDto(requestDto);
+        convertedEntity.setCreatedBy(createdBy);
+        convertedEntity.setAssignee(assignee);
+
+        TaskEntity entity = repository.save(convertedEntity);
         log.info("Task created, id={}", entity.getId());
     }
 

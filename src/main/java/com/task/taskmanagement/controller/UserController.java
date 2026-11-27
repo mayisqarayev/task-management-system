@@ -1,7 +1,7 @@
 package com.task.taskmanagement.controller;
 
 import com.task.taskmanagement.dto.request.AddUserRequestDto;
-import com.task.taskmanagement.dto.request.AllUserResponseDto;
+import com.task.taskmanagement.dto.response.AllUserResponseDto;
 import com.task.taskmanagement.dto.request.ChangePasswordRequestDto;
 import com.task.taskmanagement.dto.request.UpdateUserRequestDto;
 import com.task.taskmanagement.dto.response.PageResponseDto;

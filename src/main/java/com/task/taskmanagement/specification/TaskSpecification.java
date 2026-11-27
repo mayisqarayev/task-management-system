@@ -3,10 +3,10 @@ package com.task.taskmanagement.specification;
 import com.task.taskmanagement.entity.TaskEntity;
 import com.task.taskmanagement.entity.enums.TaskPriority;
 import com.task.taskmanagement.entity.enums.TaskStatus;
+import com.task.taskmanagement.service.UserService;
 import org.springframework.data.jpa.domain.Specification;
 
 public class TaskSpecification {
-
     private TaskSpecification() {
     }
 

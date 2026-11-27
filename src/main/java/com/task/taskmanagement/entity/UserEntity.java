@@ -8,7 +8,7 @@ import lombok.experimental.FieldDefaults;
 @Table(name = "users")
 @Getter
 @Setter
-@ToString
+@ToString(exclude ={"password"})
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor

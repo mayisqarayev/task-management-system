@@ -1,7 +1,7 @@
 package com.task.taskmanagement.mapper;
 
 import com.task.taskmanagement.dto.request.AddUserRequestDto;
-import com.task.taskmanagement.dto.request.AllUserResponseDto;
+import com.task.taskmanagement.dto.response.AllUserResponseDto;
 import com.task.taskmanagement.dto.response.UserResponseDto;
 import com.task.taskmanagement.entity.UserEntity;
 import org.springframework.stereotype.Component;
@@ -12,9 +12,9 @@ public class UserMapper {
 
     public UserEntity toEntityFromAddUserRequestDto(AddUserRequestDto requestDto) {
         UserEntity entity = new UserEntity();
-        entity.setUsername(requestDto.getUsername());
+        entity.setUsername(requestDto.getUsername().trim().toLowerCase());
         entity.setPassword(requestDto.getPassword());
-        entity.setEmail(requestDto.getEmail());
+        entity.setEmail(requestDto.getEmail().trim().toLowerCase());
         entity.setFirstName(null);
         entity.setLastName(null);
 

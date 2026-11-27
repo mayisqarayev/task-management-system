@@ -11,7 +11,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AddTaskRequestDto {
-    @NotNull(message = "Title can not be null")
+    @NotBlank(message = "Title can not be blank")
     String title;
     @NotEmpty(message = "Description can not be empty")
     String description;
@@ -20,4 +20,8 @@ public class AddTaskRequestDto {
     @Min(value = 1, message = "Weight must be least 1")
     @Max(value = 10, message = "Weight must be most 10")
     Short taskWeight;
+    @NotNull(message = "Created by can not be null")
+    Integer createdBy;
+    @NotNull(message = "Assignee id can not be null")
+    Integer assigneeId;
 }
